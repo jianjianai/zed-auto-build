@@ -1,0 +1,27 @@
+name: build
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 UTC 时间 00:00 运行
+
+jobs:
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: zed-industries/zed
+      - uses: dtolnay/rust-toolchain@stable
+      - run: rustup target add wasm32-wasi
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release
+      - run: ren target\release\Zed.exe Zed-windows.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zed-windows
+          path: target\release\Zed-windows.exe
+          
