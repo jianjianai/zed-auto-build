@@ -20,11 +20,10 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --release
       - run: ren target\release\Zed.exe Zed-windows-amd64.exe
-      - uses: JasonEtco/upload-to-release@master
+      - uses: actions/upload-artifact@v4
         with:
-          args: target\release\Zed-windows-amd64.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: Zed-windows-amd64
+          path: target\release\Zed-windows-amd64.exe
           
   build-windows-x86:
     runs-on: windows-latest
@@ -44,11 +43,11 @@ jobs:
         with:
           name: zed-windows-x86
           path: target\release\Zed-windows-x86.exe
-      - uses: JasonEtco/upload-to-release@master
+      - uses: actions/upload-artifact@v4
         with:
-          args: target\release\Zed-windows-x86.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: Zed-windows-x86
+          path: target\release\Zed-windows-x86.exe
+
 
   build-windows-arm64:
     runs-on: windows-latest
@@ -66,10 +65,29 @@ jobs:
       - run: ren target\release\Zed.exe Zed-windows-arm64.exe
       - uses: actions/upload-artifact@v4
         with:
-          name: zed-windows-arm64
+          name: Zed-windows-amarm64d64
           path: target\release\Zed-windows-arm64.exe
+
+  upload-to-release:
+    runs-on: ubuntu-latest
+    needs: [build-windows-amd64,build-windows-x86,build-windows-arm64]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: Zed-*
+          merge-multiple: true
       - uses: JasonEtco/upload-to-release@master
         with:
-          args: target\release\Zed-windows-arm64.exe
+          args: Zed-windows-amd64.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: JasonEtco/upload-to-release@master
+        with:
+          args: Zed-windows-x86.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: JasonEtco/upload-to-release@master
+        with:
+          args: Zed-windows-arm64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
