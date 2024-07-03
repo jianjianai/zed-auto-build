@@ -43,11 +43,6 @@ jobs:
         with:
           name: zed-windows-x86
           path: target\release\Zed-windows-x86.exe
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Zed-windows-x86
-          path: target\release\Zed-windows-x86.exe
-
 
   build-windows-arm64:
     runs-on: windows-latest
@@ -76,18 +71,15 @@ jobs:
         with:
           pattern: Zed-*
           merge-multiple: true
-      - uses: JasonEtco/upload-to-release@master
+      - run: echo "DATE=$(date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_OUTPUT
+      - uses: softprops/action-gh-release@v1
         with:
-          args: Zed-windows-amd64.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: JasonEtco/upload-to-release@master
-        with:
-          args: Zed-windows-x86.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: JasonEtco/upload-to-release@master
-        with:
-          args: Zed-windows-arm64.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          name: ${{ steps.date.outputs.DATE }} 自动构建
+          tag_name: ${{ steps.date.outputs.DATE }}
+          body: ${{ steps.date.outputs.DATE }} 自动构建
+          generate_release_notes: true
+          files: |
+            Zed-windows-amd64.exe
+            Zed-windows-x86.exe
+            Zed-windows-arm64.exe
