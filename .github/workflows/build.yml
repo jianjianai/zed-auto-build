@@ -5,10 +5,8 @@ on:
   schedule:
     - cron: '0 0 * * *'  # 每天 UTC 时间 00:00 运行
 
-
 jobs:
-
-  build-windows:
+  build-windows-amd64:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,12 +16,60 @@ jobs:
       - run: rustup target add wasm32-wasi
       - uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: x64
+          arch: amd64
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --release
-      - run: ren target\release\Zed.exe Zed-windows.exe
+      - run: ren target\release\Zed.exe Zed-windows-amd64.exe
+      - uses: JasonEtco/upload-to-release@master
+        with:
+          args: target\release\Zed-windows-amd64.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  build-windows-x86:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: zed-industries/zed
+      - uses: dtolnay/rust-toolchain@stable
+      - run: rustup target add wasm32-wasi
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64_x86
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release
+      - run: ren target\release\Zed.exe Zed-windows-x86.exe
       - uses: actions/upload-artifact@v4
         with:
-          name: zed-windows
-          path: target\release\Zed-windows.exe
-          
+          name: zed-windows-x86
+          path: target\release\Zed-windows-x86.exe
+      - uses: JasonEtco/upload-to-release@master
+        with:
+          args: target\release\Zed-windows-x86.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows-arm64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: zed-industries/zed
+      - uses: dtolnay/rust-toolchain@stable
+      - run: rustup target add wasm32-wasi
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64_arm64
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release
+      - run: ren target\release\Zed.exe Zed-windows-arm64.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zed-windows-arm64
+          path: target\release\Zed-windows-arm64.exe
+      - uses: JasonEtco/upload-to-release@master
+        with:
+          args: target\release\Zed-windows-arm64.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
