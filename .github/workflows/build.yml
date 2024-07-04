@@ -32,64 +32,10 @@ jobs:
         with:
           name: Zed-windows-amd64
           path: target\release\Zed-windows-amd64.exe
-          
-  build-windows-x86:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: zed-industries/zed
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: dtolnay/rust-toolchain@stable
-      - run: rustup target add wasm32-wasi
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: amd64_x86
-      - run: cargo build --release
-      - run: ren target\release\Zed.exe Zed-windows-x86.exe
-      - uses: actions/upload-artifact@v4
-        with:
-          name: zed-windows-x86
-          path: target\release\Zed-windows-x86.exe
-
-  build-windows-arm64:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: zed-industries/zed
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: dtolnay/rust-toolchain@stable
-      - run: rustup target add wasm32-wasi
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: amd64_arm64
-      - run: cargo build --release
-      - run: ren target\release\Zed.exe Zed-windows-arm64.exe
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Zed-windows-arm64
-          path: target\release\Zed-windows-arm64.exe
 
   upload-to-release:
     runs-on: ubuntu-latest
-    needs: [build-windows-amd64,build-windows-x86,build-windows-arm64]
+    needs: [build-windows-amd64]
     steps:
       - uses: actions/download-artifact@v4
         with:
