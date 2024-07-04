@@ -46,7 +46,6 @@ jobs:
           merge-multiple: true
       - uses: softprops/action-gh-release@v1
         with:
-          prerelease: true
           name: 自动构建
           tag_name: auto
           body: 自动构建
