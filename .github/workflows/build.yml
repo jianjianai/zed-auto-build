@@ -15,6 +15,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: zed-industries/zed
+      - uses: dtolnay/rust-toolchain@stable
+      - run: rustup target add wasm32-wasi
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
       - uses: actions/cache@v3
         with:
           path: |
@@ -24,13 +29,8 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: dtolnay/rust-toolchain@stable
-      - run: rustup target add wasm32-wasi
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: amd64
       - run: cargo build --release
-      - run: ren target\release\Zed.exe Zed-windows-amd64.exe
+      - run: copy target\release\Zed.exe target\release\Zed-windows-amd64.exe
       - uses: actions/upload-artifact@v4
         with:
           name: Zed-windows-amd64
