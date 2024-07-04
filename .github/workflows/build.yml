@@ -30,7 +30,7 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - run: cargo build --release
-      - run: copy target\release\Zed.exe target\release\Zed-windows-amd64.exe
+      - run: copy target\release\Zed.exe target\release\Zed-windows-amd64.exe /y
       - uses: actions/upload-artifact@v4
         with:
           name: Zed-windows-amd64
