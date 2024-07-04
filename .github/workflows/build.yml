@@ -84,7 +84,7 @@ jobs:
       - run: ren target\release\Zed.exe Zed-windows-arm64.exe
       - uses: actions/upload-artifact@v4
         with:
-          name: Zed-windows-amarm64d64
+          name: Zed-windows-arm64
           path: target\release\Zed-windows-arm64.exe
 
   upload-to-release:
